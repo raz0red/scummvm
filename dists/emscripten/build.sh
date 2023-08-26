@@ -43,12 +43,12 @@ Usage: ./dists/emscripten/build.sh [TASKS] [OPTIONS]
 
 Output the configuration name of the system \`$me' is run on.
 
-Tasks: 
-  (space separated) List of tasks to run. See ./dists/emscripten/README.md for details.    
+Tasks:
+  (space separated) List of tasks to run. See ./dists/emscripten/README.md for details.
 
 Options:
   -h, --help         print this help, then exit
-  --bundle-games=    comma-separated list of demos and freeware games to bundle. 
+  --bundle-games=    comma-separated list of demos and freeware games to bundle.
   -v, --verbose          print all commands run by the script
   --*                all other options are passed on to the configure script
 "
@@ -107,13 +107,13 @@ if [[ "setup" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]];
       echo "Patching Emscripten"
       cd upstream/emscripten
       # until https://github.com/emscripten-core/emscripten/pull/15893 gets merged and released, we need to manually patch it
-      wget -nc https://raw.githubusercontent.com/chkuendig/scummvm-demo/main/patches/emscripten-15893.patch  -O "$DIST_FOLDER/emscripten-15893.patch" || true 
+      wget -nc https://raw.githubusercontent.com/chkuendig/scummvm-demo/main/patches/emscripten-15893.patch  -O "$DIST_FOLDER/emscripten-15893.patch" || true
       patch -p1 --verbose <"$DIST_FOLDER/emscripten-15893.patch"
       # until https://github.com/emscripten-core/emscripten/pull/16559 gets merged and released, we need to manually patch it
-      wget -nc https://raw.githubusercontent.com/chkuendig/scummvm-demo/main/patches/emscripten-16559.patch  -O "$DIST_FOLDER/emscripten-16559.patch" || true 
+      wget -nc https://raw.githubusercontent.com/chkuendig/scummvm-demo/main/patches/emscripten-16559.patch  -O "$DIST_FOLDER/emscripten-16559.patch" || true
       patch -p1 --verbose <"$DIST_FOLDER/emscripten-16559.patch"
       # until https://github.com/emscripten-core/emscripten/pull/16687 gets merged and released, we need to manually patch it
-      wget -nc https://raw.githubusercontent.com/chkuendig/scummvm-demo/main/patches/emscripten-16687.patch  -O "$DIST_FOLDER/emscripten-16687.patch" || true 
+      wget -nc https://raw.githubusercontent.com/chkuendig/scummvm-demo/main/patches/emscripten-16687.patch  -O "$DIST_FOLDER/emscripten-16687.patch" || true
       patch -p1 --verbose <"$DIST_FOLDER/emscripten-16687.patch"
     fi
 
@@ -221,7 +221,7 @@ if [[ "libs" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; 
     wget -nc "http://libmpeg2.sourceforge.net/files/libmpeg2-0.5.1.tar.gz"
     tar -xf libmpeg2-0.5.1.tar.gz
     cd "$LIBS_FOLDER/libmpeg2-0.5.1/"
-    CFLAGS="-fPIC" emconfigure ./configure --host=wasm32-unknown-none --prefix="$LIBS_FOLDER/build/" --disable-sdl
+    CFLAGS="-fPIC" emconfigure ./configure --host=wasm32-unknown-none --build=wasm32-unknown-none --prefix="$LIBS_FOLDER/build/" --disable-sdl
     emmake make
     emmake make install
   fi
@@ -238,6 +238,17 @@ if [[ "libs" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; 
     emmake make install
   fi
   LIBS_FLAGS="${LIBS_FLAGS} --with-a52-prefix=$LIBS_FOLDER/build/"
+  if [[ ! -f "$LIBS_FOLDER/build/lib/libFLAC.a" ]]; then
+    echo "building flac 1.4.3"
+    cd "$LIBS_FOLDER"
+    wget -nc "https://github.com/xiph/flac/releases/download/1.4.3/flac-1.4.3.tar.xz"
+    tar -xf flac-1.4.3.tar.xz
+    cd "$LIBS_FOLDER/flac-1.4.3/"
+    CFLAGS="-fPIC" emconfigure ./configure --host=wasm32-unknown-none --build=wasm32-unknown-none --prefix="$LIBS_FOLDER/build/"
+    emmake make -j 3
+    emmake make install
+  fi
+  LIBS_FLAGS="${LIBS_FLAGS} --with-flac-prefix=$LIBS_FOLDER/build/"
 fi
 
 #################################
@@ -247,7 +258,7 @@ if [[ "configure" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$)
   cd "${ROOT_FOLDER}"
   echo "Running configure"
   # TODO: Figure out how configure could guess the host
-  emconfigure ./configure --host=wasm32-unknown-emscripten --build=wasm32-unknown-emscripten ${CONFIGURE_ARGS} ${LIBS_FLAGS}
+  emconfigure ./configure --host=wasm32-unknown-emscripten --build=wasm32-unknown-emscripten --enable-vkeybd ${CONFIGURE_ARGS} ${LIBS_FLAGS}
 
   # TODO: configure currently doesn't clean up all files it creates
   rm scummvm-conf.*

@@ -25,6 +25,9 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #include <emscripten.h>
 
+#ifdef WRC
+#include "engine.h"
+#endif
 #include "backends/platform/sdl/emscripten/emscripten.h"
 
 // Inline JavaScript, see https://emscripten.org/docs/api_reference/emscripten.h.html#inline-assembly-javascript for details
@@ -46,9 +49,19 @@ EM_JS(void, toggleFullscreen, (bool enable), {
 // Overridden functions
 bool OSystem_Emscripten::hasFeature(Feature f) {
 	if (f == kFeatureFullscreenMode)
+#ifndef WRC
 		return true;
+#else
+		return false;
+#endif
 	if (f == kFeatureNoQuit)
+#ifndef WRC
 		return true;
+#else
+		return false;
+	if (f == Engine::kSupportsReturnToLauncher)
+		return false;
+#endif
 	return OSystem_POSIX::hasFeature(f);
 }
 

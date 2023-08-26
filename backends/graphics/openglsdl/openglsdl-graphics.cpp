@@ -19,6 +19,10 @@
  *
  */
 
+#ifdef WRC
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#endif
+
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #include "backends/graphics/opengl/texture.h"
 #include "backends/events/sdl/sdl-events.h"
@@ -787,6 +791,9 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		if (!stretchModes[index].name)
 			index = 0;
 		beginGFXTransaction();
+#ifdef WRC
+printf("### Cycle stretch mode: %d\n", stretchModes[index].id);
+#endif
 		setStretchMode(stretchModes[index].id);
 		endGFXTransaction();
 

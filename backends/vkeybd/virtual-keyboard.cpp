@@ -292,7 +292,9 @@ void VirtualKeyboard::KeyPressQueue::toggleFlags(byte fl) {
 	_flags ^= fl;
 	_flagsStr.clear();
 	if (_flags) {
+#ifndef WRC
 		_flagsStr = KEY_START_CHAR;
+#endif
 		if (_flags & KBD_CTRL)
 			_flagsStr += "Ctrl+";
 		if (_flags & KBD_ALT)
@@ -332,15 +334,23 @@ void VirtualKeyboard::KeyPressQueue::insertKey(KeyState key) {
 
 	if (keyStr.empty()) keyStr += "???";
 
+#ifndef WRC
 	_keysStr.insertChar(KEY_START_CHAR, _strPos++);
+#endif
 	const char *k = keyStr.c_str();
 	while (char ch = *k++)
 		_keysStr.insertChar(ch, _strPos++);
-	_keysStr.insertChar(KEY_END_CHAR, _strPos++);
+#ifndef WRC
+	keysStr.insertChar(KEY_END_CHAR, _strPos++);
+#endif
 
 	VirtualKeyPress kp;
 	kp.key = key;
+#ifndef WRC
 	kp.strLen = keyStr.size() + 2;
+#else
+	kp.strLen = keyStr.size();
+#endif
 	_keys.insert(_keyPos, kp);
 }
 

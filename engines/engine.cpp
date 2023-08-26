@@ -235,6 +235,7 @@ bool splash = false;
 #include "logo_data.h"
 
 void splashScreen() {
+#ifndef WRC
 	Common::MemoryReadStream stream(logo_data, ARRAYSIZE(logo_data));
 
 	Image::BitmapDecoder bitmap;
@@ -304,6 +305,7 @@ void splashScreen() {
 		g_system->delayMillis(10);
 	}
 	g_system->hideOverlay();
+#endif
 
 	splash = true;
 }

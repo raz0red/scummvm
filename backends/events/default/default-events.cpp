@@ -80,7 +80,22 @@ void DefaultEventManager::init() {
 #endif
 }
 
+#ifdef WRC
+extern bool emPaused;
+#endif
+
 bool DefaultEventManager::pollEvent(Common::Event &event) {
+
+#ifdef WRC
+	if (emPaused) {
+		PauseToken pt = g_engine->pauseEngine();
+		while (emPaused) {
+			g_system->delayMillis(100);
+		}
+		pt.clear();
+	}
+#endif
+
 	_dispatcher.dispatch();
 
 	if (g_engine)
@@ -98,8 +113,10 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	// replace "Quit" event with "Return to Launcher". This is also handled in scummvm_main, but
 	// doing it here allows getting the correct confirmation dialog if the "confirm_exit" setting
 	// is set to true.
+#ifndef WRC
 	if (event.type == Common::EVENT_QUIT && (g_system->hasFeature(OSystem::kFeatureNoQuit) || (ConfMan.getBool("gui_return_to_launcher_at_exit") && g_engine && g_engine->hasFeature(Engine::kSupportsReturnToLauncher))))
 		event.type = Common::EVENT_RETURN_TO_LAUNCHER;
+#endif
 
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
@@ -181,6 +198,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		break;
 
 	case Common::EVENT_RETURN_TO_LAUNCHER:
+#ifndef WRC
 		if (ConfMan.getBool("confirm_exit")) {
 			if (_confirmExitDialogActive) {
 				forwardEvent = false;
@@ -197,6 +215,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_confirmExitDialogActive = false;
 		} else
 			_shouldReturnToLauncher = true;
+#endif
 		break;
 
 	case Common::EVENT_MUTE:
