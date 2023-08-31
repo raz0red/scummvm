@@ -19,6 +19,10 @@
  *
  */
 
+#ifdef WRC
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#endif
+
 #include "groovie/groovie.h"
 #include "groovie/cursor.h"
 #include "groovie/detection.h"
@@ -261,7 +265,14 @@ Common::Error GroovieEngine::run() {
 		_system->getAudioCDManager()->open();
 	}
 
+#ifdef WRC
+	int count = 0;
+#endif
+
 	while (!shouldQuit()) {
+#ifdef WRC
+		count++;
+#endif
 		// Handle input
 		Common::Event ev;
 		while (_eventMan->pollEvent(ev)) {
@@ -344,6 +355,15 @@ Common::Error GroovieEngine::run() {
 		// Update the screen if required
 		_graphicsMan->update();
 		_soundQueue.tick();
+
+#ifdef WRC
+		// Total hack. Is 50 a good number? 
+		if ((count % 50) == 0) {
+			count = 0;
+			_system->delayMillis(0);
+			_system->updateScreen();
+		}
+#endif
 	}
 
 	return Common::kNoError;

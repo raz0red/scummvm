@@ -19,6 +19,10 @@
  *
  */
 
+#ifdef WRC
+#include <emscripten.h>
+#endif
+
 // FIXME: Avoid using printf
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
@@ -1328,6 +1332,11 @@ static Common::String detectGames(const Common::String &path, const Common::Stri
 	DetectedGames candidates = recListGames(dir, engineId, gameId, recursive);
 
 	if (candidates.empty()) {
+#ifdef WRC
+		EM_ASM(
+			window.emulator.onGameNotFound();
+		);
+#endif
 		printf("WARNING: ScummVM could not find any game in %s\n", dir.getPath().c_str());
 		if (noPath) {
 			printf("WARNING: Consider using --path=<path> to specify a directory\n");

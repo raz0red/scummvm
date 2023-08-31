@@ -19,6 +19,11 @@
  *
  */
 
+#ifdef WRC
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include <emscripten.h>
+#endif
+
 #include "common/scummsys.h"
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
@@ -132,6 +137,14 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const Common::String 
 Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String &filename, bool compress) {
 	// Assure the savefile name cache is up-to-date.
 	const Common::String savePathName = getSavePath();
+
+#ifdef WRC
+	printf("### Save file: %s\n", filename.c_str());
+	EM_ASM({
+		window.emulator.onSaveGame(UTF8ToString($0));
+	}, (filename).c_str());
+#endif
+
 	assureCached(savePathName);
 	if (getError().getCode() != Common::kNoError)
 		return nullptr;

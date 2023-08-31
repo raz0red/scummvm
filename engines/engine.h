@@ -549,6 +549,13 @@ public:
 	 */
 	void openMainMenuDialog();
 
+#ifdef WRC
+	/**
+	 * Run the global main menu dialog.
+	 */
+	void openScummMainMenuDialog();
+#endif
+
 	/**
 	 * Display a warning to the user that the game is not fully supported.
 	 *

@@ -19,6 +19,10 @@
  *
  */
 
+#ifdef WRC
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#endif
+
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/system.h"
@@ -192,6 +196,9 @@ static void debugHelper(const char *s, va_list va, bool caret = true) {
 		g_system->logMessage(LogMessageType::kDebug, buf.c_str());
 	// TODO: Think of a good fallback in case we do not have
 	// any OSystem yet.
+#if 0 // wrc debug
+	printf("%s\n", buf.c_str());
+#endif
 }
 
 void debug(const char *s, ...) {
@@ -242,10 +249,12 @@ void debugN(int level, const char *s, ...) {
 void debugC(int level, uint32 debugChannels, const char *s, ...) {
 	va_list va;
 
+#if 1 // wrc debug
 	// Debug level 11 turns on all special debug level messages
 	if (gDebugLevel != 11)
 		if (level > gDebugLevel || !(DebugMan.isDebugChannelEnabled(debugChannels)))
 			return;
+#endif
 
 	va_start(va, s);
 	debugHelper(s, va);
@@ -256,9 +265,11 @@ void debugCN(int level, uint32 debugChannels, const char *s, ...) {
 	va_list va;
 
 	// Debug level 11 turns on all special debug level messages
+#if 1 // wrc debug
 	if (gDebugLevel != 11)
 		if (level > gDebugLevel || !(DebugMan.isDebugChannelEnabled(debugChannels)))
 			return;
+#endif
 
 	va_start(va, s);
 	debugHelper(s, va, false);
@@ -268,10 +279,12 @@ void debugCN(int level, uint32 debugChannels, const char *s, ...) {
 void debugC(uint32 debugChannels, const char *s, ...) {
 	va_list va;
 
+#if 1 // wrc debug
 	// Debug level 11 turns on all special debug level messages
 	if (gDebugLevel != 11)
 		if (!(DebugMan.isDebugChannelEnabled(debugChannels)))
 			return;
+#endif
 
 	va_start(va, s);
 	debugHelper(s, va);
@@ -281,10 +294,12 @@ void debugC(uint32 debugChannels, const char *s, ...) {
 void debugCN(uint32 debugChannels, const char *s, ...) {
 	va_list va;
 
+#if 1 // wrc debug
 	// Debug level 11 turns on all special debug level messages
 	if (gDebugLevel != 11)
 		if (!(DebugMan.isDebugChannelEnabled(debugChannels)))
 			return;
+#endif
 
 	va_start(va, s);
 	debugHelper(s, va, false);

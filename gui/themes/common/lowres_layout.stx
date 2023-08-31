@@ -1386,7 +1386,7 @@
 					width = '120'
 					height = 'Globals.Button.Height'
 			/>
-			<space size = '2'/>
+			<!-- <space size = '2'/> -->
 			<widget name = 'Resume'
 					width = '120'
 					height = 'Globals.Button.Height'

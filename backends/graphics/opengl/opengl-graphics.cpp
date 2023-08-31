@@ -884,6 +884,11 @@ void OpenGLGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
 
 #ifdef USE_OSD
 void OpenGLGraphicsManager::osdMessageUpdateSurface() {
+
+#ifdef WRC
+	bool isScreenshotHack = _osdMessageNextData == Common::U32String("_screenshot_hack_");
+#endif
+
 	// Split up the lines.
 	Common::Array<Common::U32String> osdLines;
 	Common::U32StringTokenizer tokenizer(_osdMessageNextData, "\n");
@@ -909,6 +914,13 @@ void OpenGLGraphicsManager::osdMessageUpdateSurface() {
 	width  = MIN<uint>(width,  _gameDrawRect.width());
 	height = MIN<uint>(height, _gameDrawRect.height());
 
+#ifdef WRC
+	if (isScreenshotHack) {
+		width = 1;
+		height = 1;
+	}
+#endif
+
 	delete _osdMessageSurface;
 	_osdMessageSurface = nullptr;
 
@@ -927,6 +939,10 @@ void OpenGLGraphicsManager::osdMessageUpdateSurface() {
 	const uint32 color = dst->format.RGBToColor(40, 40, 40);
 	dst->fillRect(Common::Rect(0, 0, width, height), color);
 
+#ifdef WRC
+	if (!isScreenshotHack) {
+#endif
+
 	// Render the message in white
 	const uint32 white = dst->format.RGBToColor(255, 255, 255);
 	for (uint i = 0; i < osdLines.size(); ++i) {
@@ -934,6 +950,9 @@ void OpenGLGraphicsManager::osdMessageUpdateSurface() {
 		                 0, i * lineHeight + vOffset + lineSpacing, width,
 		                 white, Graphics::kTextAlignCenter, 0, true);
 	}
+#ifdef WRC
+	}
+#endif
 
 	_osdMessageSurface->updateGLTexture();
 

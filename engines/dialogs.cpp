@@ -67,6 +67,7 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Resume", _("~R~esume"), Common::U32String(), kPlayCmd, 'P');
 
+//#ifndef WRC
 	_loadButton = new GUI::ButtonWidget(this, "GlobalMenu.Load", _("~L~oad"), Common::U32String(), kLoadCmd);
 	_loadButton->setVisible(_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime));
 	_loadButton->setEnabled(_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime));
@@ -74,6 +75,7 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	_saveButton = new GUI::ButtonWidget(this, "GlobalMenu.Save", _("~S~ave"), Common::U32String(), kSaveCmd);
 	_saveButton->setVisible(_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
 	_saveButton->setEnabled(_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
+//#endif
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Options", _("~O~ptions"), Common::U32String(), kOptionsCmd);
 
@@ -90,10 +92,10 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	else
 		_returnToLauncherButton = new GUI::ButtonWidget(this, "GlobalMenu.ReturnToLauncher", _c("~R~eturn to Launcher", "lowres"), Common::U32String(), kLauncherCmd);
 	_returnToLauncherButton->setEnabled(_engine->hasFeature(Engine::kSupportsReturnToLauncher));
-#endif
 
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit) && (!(ConfMan.getBool("gui_return_to_launcher_at_exit")) || !_engine->hasFeature(Engine::kSupportsReturnToLauncher)))
 		new GUI::ButtonWidget(this, "GlobalMenu.Quit", _("~Q~uit"), Common::U32String(), kQuitCmd);
+#endif
 
 	_aboutDialog = new GUI::AboutDialog();
 	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
@@ -153,10 +155,12 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 }
 
 void MainMenuDialog::reflowLayout() {
+//#ifndef WRC
 	if (_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime))
 		_loadButton->setEnabled(_engine->canLoadGameStateCurrently());
 	if (_engine->hasFeature(Engine::kSupportsSavingDuringRuntime))
 		_saveButton->setEnabled(_engine->canSaveGameStateCurrently());
+//#endif
 
 	// Overlay size might have changed since the construction of the dialog.
 	// Update labels when it might be needed

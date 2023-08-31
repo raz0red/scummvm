@@ -19,6 +19,10 @@
  *
  */
 
+#ifdef WRC
+#include <emscripten.h>
+#endif
+
 #include "backends/graphics/sdl/sdl-graphics.h"
 #include "backends/platform/sdl/sdl-sys.h"
 #include "backends/platform/sdl/sdl.h"
@@ -347,13 +351,22 @@ void SdlGraphicsManager::saveScreenshot() {
 	}
 
 	if (saveScreenshot(screenshotsPath + filename)) {
+#ifdef WRC
+		EM_ASM({
+			window.emulator.onSaveScreenshot(UTF8ToString($0));
+		}, (screenshotsPath + filename).c_str());
+#endif
 		if (screenshotsPath.empty())
 			debug("Saved screenshot '%s' in current directory", filename.c_str());
 		else
 			debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), screenshotsPath.c_str());
 
 #ifdef USE_OSD
+#ifdef WRC
+		displayMessageOnOSD(Common::U32String("_screenshot_hack_"));
+#else
 		displayMessageOnOSD(Common::U32String::format(_("Saved screenshot '%s'"), filename.c_str()));
+#endif
 #endif
 	} else {
 		if (screenshotsPath.empty())

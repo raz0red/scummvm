@@ -19,6 +19,10 @@
  *
  */
 
+#ifdef WRC
+#include <emscripten.h>
+#endif
+
 #if defined(WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -665,7 +669,17 @@ void Engine::pauseEngineIntern(bool pause) {
 	_mixer->pauseAll(pause);
 }
 
+#ifdef WRC
 void Engine::openMainMenuDialog() {
+	EM_ASM(
+		window.emulator.onShowMenu();
+	);
+}
+
+void Engine::openScummMainMenuDialog() {
+#else
+void Engine::openMainMenuDialog() {
+#endif
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();

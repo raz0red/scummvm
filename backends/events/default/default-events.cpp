@@ -82,6 +82,7 @@ void DefaultEventManager::init() {
 
 #ifdef WRC
 extern bool emPaused;
+extern bool emShowScummMenu;
 #endif
 
 bool DefaultEventManager::pollEvent(Common::Event &event) {
@@ -93,6 +94,13 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			g_system->delayMillis(100);
 		}
 		pt.clear();
+	}
+
+	if (emShowScummMenu) {
+		emShowScummMenu = false;
+		if (g_engine && !g_engine->isPaused()) {
+			g_engine->openScummMainMenuDialog();
+		}
 	}
 #endif
 

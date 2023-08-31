@@ -25,10 +25,13 @@
 #include "engine.h"
 
 #if defined(__EMSCRIPTEN__)
-#include <emscripten.h>
 #include "backends/platform/sdl/emscripten/emscripten.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
+#include <emscripten.h>
+
+bool emPaused = false;
+bool emShowScummMenu = false;
 
 int main(int argc, char *argv[]) {
 
@@ -43,7 +46,7 @@ int main(int argc, char *argv[]) {
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
 #endif
 
-	for(int i = 0; i < argc; i++) {
+	for (int i = 0; i < argc; i++) {
 		printf("%s\n", argv[i]);
 	}
 
@@ -60,26 +63,31 @@ int main(int argc, char *argv[]) {
 	printf("## After destroy.\n");
 
 	EM_ASM(
-		window.emulator.getApp().exit();
+		window.emulator.onExit();
 	);
 
 	return res;
 }
 
 extern "C" void emSetStretchMode(int mode) {
-		printf("### Set stretch mode: %d\n", mode);
-		g_system->beginGFXTransaction();
-		g_system->setStretchMode(mode);
-		g_system->endGFXTransaction();
+	printf("### Set stretch mode: %d\n", mode);
+	g_system->beginGFXTransaction();
+	g_system->setStretchMode(mode);
+	g_system->endGFXTransaction();
 }
 
-bool emPaused = false;
+static int pauseCount = 0;
+
 extern "C" void emPause() {
+	pauseCount++;
 	emPaused = true;
 }
 
 extern "C" void emUnpause() {
-	emPaused = false;
+	pauseCount--;
+	if (pauseCount == 0) {
+		emPaused = false;
+	}
 }
 
 extern "C" void emQuit() {
@@ -90,41 +98,23 @@ extern "C" void emQuit() {
 
 // Common::Error Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 extern "C" int saveGame() {
-	//Common::Error
 	auto err = g_engine->saveGameState(0, "foo", false);
 	printf("## Save result: %d\n", err.getCode());
 	return err.getCode();
 }
 
 extern "C" int loadGame() {
-	//Common::Error
 	auto err = g_engine->loadGameState(0);
 	printf("## Load result: %d\n", err.getCode());
 	return err.getCode();
 }
-#endif
 
+extern "C" void emOpenScummMainMenuDialog() {
+	emShowScummMenu = true;
+}
 
-#if 0
-window.Module._emPause()
-window.Module._saveGame();
+extern "C" void emSaveScreenshot(){
+	g_system->saveScreenshot();
+}
 
-// Loop until save shows up... need callback from scumm side
-window.Module._emUnpause(); setTimeout(() => { Module._emPause(); }, 1);
-just do async wait and loop, etc.
-mark save pending
-make call
-loop and wait one ms. (unpause, wait one ms, pause)
-at some point, scummvm calls back to indicate save worked (maybe pass filename as well?)
-deal with save file
-clear save pending
-
-FS.readdir("/home/web_user/.local/share/scummvm/saves");
-(3)['.', '..', 'tentacle.s00']
-
-(done) need to deal w/ tab changing, pause and unpause
-need to deal with touch controls
-need to override keyboard input (menu, etc. change sizes, etc. etc.)
-
-disable autosave
 #endif
