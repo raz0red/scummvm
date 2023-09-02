@@ -2433,6 +2433,11 @@ void SurfaceSdlGraphicsManager::handleScalerHotkeys(uint mode, int factor) {
 	internUpdateScreen();
 }
 
+#ifdef WRC
+extern int emStretchMode;
+extern int emFilterMode;
+#endif
+
 bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_START) {
 		return SdlGraphicsManager::notifyEvent(event);
@@ -2465,14 +2470,25 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 	case kActionToggleFilteredScaling:
 		beginGFXTransaction();
+#ifdef WRC
+			if (emFilterMode >= 0) {
+				setFeatureState(OSystem::kFeatureFilteringMode, emFilterMode);
+				emFilterMode = -1;
+			} else {
+#endif
 			setFeatureState(OSystem::kFeatureFilteringMode, !_videoMode.filtering);
+#ifdef WRC
+			}
+#endif
 		endGFXTransaction();
+#ifndef WRC
 #ifdef USE_OSD
 		if (getFeatureState(OSystem::kFeatureFilteringMode)) {
 			displayMessageOnOSD(_("Filtering enabled"));
 		} else {
 			displayMessageOnOSD(_("Filtering disabled"));
 		}
+#endif
 #endif
 		_forceRedraw = true;
 		internUpdateScreen();
@@ -2489,6 +2505,14 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			index++;
 		}
 		index++;
+#ifdef WRC
+		if (emStretchMode >= 0) {
+			if (s_supportedStretchModes[emStretchMode].name) {
+				index = emStretchMode;
+			}
+			emStretchMode = -1;
+		}
+#endif
 		if (!s_supportedStretchModes[index].name)
 			index = 0;
 
@@ -2496,12 +2520,14 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			setStretchMode(s_supportedStretchModes[index].id);
 		endGFXTransaction();
 
+#ifndef WRC
 #ifdef USE_OSD
 		Common::U32String message = Common::U32String::format("%S: %S",
 		                                                      _("Stretch mode").c_str(),
 		                                                      _(s_supportedStretchModes[index].description).c_str()
 		                            );
 		displayMessageOnOSD(message);
+#endif
 #endif
 		_forceRedraw = true;
 		internUpdateScreen();

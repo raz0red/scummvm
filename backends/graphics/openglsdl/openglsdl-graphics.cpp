@@ -636,6 +636,11 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 #endif
 }
 
+#ifdef WRC
+extern int emStretchMode;
+extern int emFilterMode;
+#endif
+
 bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_START) {
 		return SdlGraphicsManager::notifyEvent(event);
@@ -756,19 +761,30 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 		// Ctrl+Alt+f toggles filtering on/off
 		beginGFXTransaction();
+#ifdef WRC
+			if (emFilterMode >= 0) {
+				setFeatureState(OSystem::kFeatureFilteringMode, emFilterMode);
+				emFilterMode = -1;
+			} else {
+#endif
 			setFeatureState(OSystem::kFeatureFilteringMode, !getFeatureState(OSystem::kFeatureFilteringMode));
+#ifdef WRC
+			}
+#endif
 		endGFXTransaction();
 
 		// Make sure we do not ignore the next resize. This
 		// effectively checks whether loadVideoMode has been called.
 		assert(!_ignoreLoadVideoMode);
 
+#ifndef WRC
 #ifdef USE_OSD
 		if (getFeatureState(OSystem::kFeatureFilteringMode)) {
 			displayMessageOnOSD(_("Filtering enabled"));
 		} else {
 			displayMessageOnOSD(_("Filtering disabled"));
 		}
+#endif
 #endif
 
 		return true;
@@ -788,21 +804,28 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			index++;
 		}
 		index++;
+#ifdef WRC
+		if (emStretchMode >= 0) {
+			if (stretchModes[emStretchMode].name) {
+				index = emStretchMode;
+			}
+			emStretchMode = -1;
+		}
+#endif
 		if (!stretchModes[index].name)
 			index = 0;
 		beginGFXTransaction();
-#ifdef WRC
-printf("### Cycle stretch mode: %d\n", stretchModes[index].id);
-#endif
 		setStretchMode(stretchModes[index].id);
 		endGFXTransaction();
 
+#ifndef WRC
 #ifdef USE_OSD
 		Common::U32String message = Common::U32String::format("%S: %S",
 			_("Stretch mode").c_str(),
 			_(stretchModes[index].description).c_str()
 		);
 		displayMessageOnOSD(message);
+#endif
 #endif
 
 		return true;

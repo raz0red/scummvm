@@ -38,6 +38,18 @@
 #include "common/translation.h"
 #endif
 
+#ifdef WRC
+static int customStretchEvent = 0;
+int getSdlStretchModeEvent() {
+	return customStretchEvent;
+}
+
+static int customFilterEvent = 0;
+int getSdlFilterModeEvent() {
+	return customFilterEvent;
+}
+#endif
+
 SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window)
 	: _eventSource(source), _window(window), _hwScreen(nullptr)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -45,6 +57,10 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window
 #endif
 {
 	ConfMan.registerDefault("fullscreen_res", "desktop");
+#ifdef WRC
+	customStretchEvent = kActionCycleStretchMode;
+	customFilterEvent = kActionToggleFilteredScaling;
+#endif
 
 	SDL_GetMouseState(&_cursorX, &_cursorY);
 }

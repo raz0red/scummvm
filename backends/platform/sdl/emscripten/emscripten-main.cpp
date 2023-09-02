@@ -69,11 +69,30 @@ int main(int argc, char *argv[]) {
 	return res;
 }
 
+extern int getSdlFilterModeEvent();
+
+int emFilterMode = -1;
+extern "C" void emSetFilterEnabled(int enabled) {
+	printf("### Set filter mode: %d\n", enabled);
+	emFilterMode = enabled;
+
+	Common::Event eventQ;
+	eventQ.type = Common::EVENT_CUSTOM_BACKEND_ACTION_START;
+	eventQ.customType = getSdlFilterModeEvent();
+	g_system->getEventManager()->pushEvent(eventQ);
+}
+
+extern int getSdlStretchModeEvent();
+
+int emStretchMode = -1;
 extern "C" void emSetStretchMode(int mode) {
 	printf("### Set stretch mode: %d\n", mode);
-	g_system->beginGFXTransaction();
-	g_system->setStretchMode(mode);
-	g_system->endGFXTransaction();
+	emStretchMode = mode;
+
+	Common::Event eventQ;
+	eventQ.type = Common::EVENT_CUSTOM_BACKEND_ACTION_START;
+	eventQ.customType = getSdlStretchModeEvent();
+	g_system->getEventManager()->pushEvent(eventQ);
 }
 
 static int pauseCount = 0;
