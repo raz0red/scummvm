@@ -424,6 +424,11 @@ void EventManager::updateScreen() {
 	// Throttle the screen update rate to 60fps.
 	EngineState *s = g_sci->getEngineState();
 	if (g_system->getMillis() - s->_screenUpdateTime >= 1000 / 60) {
+
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
+
 		g_system->updateScreen();
 		s->_screenUpdateTime = g_system->getMillis();
 		// Throttle the checking of shouldQuit() to 60fps as well, since
