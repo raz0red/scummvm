@@ -26,9 +26,13 @@
  * Currently not much is actually properly documented, but at least you can get an overview
  * of almost all the classes, methods and variables, and how they interact.
  */
-
+#ifdef WRC
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include <emscripten.h>
+#else
 // FIXME: Avoid using printf
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#endif
 
 #include "engines/engine.h"
 #include "engines/metaengine.h"
@@ -158,6 +162,22 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	assert(plugin);
 	assert(enginePlugin);
 
+#ifdef WRC
+	printf("## %s, %s\n", enginePlugin->getEngineId(), enginePlugin->getName());
+	bool forceOpenGL = false;
+	if (!strcmp("grim", enginePlugin->getName())) {
+		forceOpenGL = true;
+	}
+
+	if (forceOpenGL) {
+		EM_ASM(
+			window.emulator.set3d(true);
+		);
+	}
+#endif
+
+// TODO: Call back into JS layer to inform is 3d
+
 	// Determine the game data path, for validation and error messages
 	Common::FSNode dir(ConfMan.get("path"));
 	Common::String target = ConfMan.getActiveDomainName();
@@ -170,7 +190,12 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	// needed because otherwise the g_system->getSupportedFormats might return
 	// bad values.
 	g_system->beginGFXTransaction();
+#ifndef WRC
 		g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+#else
+		g_system->setGraphicsMode(
+		    forceOpenGL ? "opengl" : ConfMan.get("gfx_mode").c_str());
+#endif
 	if (g_system->endGFXTransaction() != OSystem::kTransactionSuccess) {
 		warning("Switching graphics mode to '%s' failed", ConfMan.get("gfx_mode").c_str());
 		return Common::kUnknownError;
@@ -221,6 +246,12 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	// Check for errors
 	if (!engine || err.getCode() != Common::kNoError) {
 
+#ifdef WRC
+		EM_ASM(
+			window.emulator.app.exit('Failed to instantiate engine for the selected game.');
+		);
+#endif
+
 		// Print a warning; note that scummvm_main will also
 		// display an error dialog, so we don't have to do this here.
 		warning("%s failed to instantiate engine: %s (target '%s', path '%s')",
@@ -240,6 +271,12 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 		DebugMan.removeAllDebugChannels();
 		return err;
 	}
+
+#ifdef WRC
+	EM_ASM(
+		window.emulator.canvas.style.opacity = '1.0';
+	);
+#endif
 
 	// Set up the metaengine
 	engine->setMetaEngine(&metaEngine);
@@ -691,6 +728,12 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 			// Clear the active domain
 			ConfMan.setActiveDomain("");
+#ifdef WRC
+			EM_ASM(
+				window.emulator.app.exit('Could not find any engine capable of running the selected game');
+			);
+			return 0;
+#endif
 		}
 
 		// reset the graphics to default

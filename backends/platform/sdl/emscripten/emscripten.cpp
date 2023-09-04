@@ -32,17 +32,18 @@
 
 // Inline JavaScript, see https://emscripten.org/docs/api_reference/emscripten.h.html#inline-assembly-javascript for details
 EM_JS(bool, isFullscreen, (), {
-	return !!document.fullscreenElement;
+	return true;
+	//return !!document.fullscreenElement;
 });
 
 EM_JS(void, toggleFullscreen, (bool enable), {
-	let canvas = document.getElementById('canvas');
-	if (enable && !document.fullscreenElement) {
-		canvas.requestFullscreen();
-	}
-	if (!enable && document.fullscreenElement) {
-		document.exitFullscreen();
-	}
+	// let canvas = document.getElementById('canvas');
+	// if (enable && !document.fullscreenElement) {
+	// 	canvas.requestFullscreen();
+	// }
+	// if (!enable && document.fullscreenElement) {
+	// 	document.exitFullscreen();
+	// }
 });
 
 

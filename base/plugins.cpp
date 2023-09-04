@@ -846,6 +846,10 @@ const Plugin *PluginManager::findEnginePlugin(const Common::String &engineId) {
 			return plugin;
 	}
 
+#ifdef WRC
+	return nullptr;
+#endif
+
 	// We failed to find it using the engine ID. Scan the list of plugins
 	PluginMan.loadFirstPlugin();
 	do {

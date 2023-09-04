@@ -4,7 +4,6 @@ Module["arguments"].push("--config=/scummvm.ini");
 Module["arguments"].push("-p");
 Module["arguments"].push("/game/");
 Module["arguments"].push("--auto-detect");
-Module["arguments"].push("--aspect-ratio");
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API only works in secure contexts and supported browsers.
 // This disables joystick support to avoid a crash when initializing the sdl subsystem without the gamepad API being available.

@@ -20,6 +20,7 @@
  */
 
 #ifdef WRC
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include <emscripten.h>
 #endif
 
@@ -86,6 +87,13 @@ static void defaultOutputFormatter(char *dst, const char *src, size_t dstSize) {
 
 static bool defaultErrorHandler(const char *msg) {
 	bool handled = false;
+
+#ifdef WRC
+	EM_ASM({
+		window.emulator.app.exit(UTF8ToString($0));
+	}, msg);
+	exit(0);
+#endif
 
 	// Unless this error -originated- within the debugger itself, we
 	// now invoke the debugger, if available / supported.
