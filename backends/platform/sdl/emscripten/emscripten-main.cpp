@@ -136,4 +136,9 @@ extern "C" void emSaveScreenshot(){
 	g_system->saveScreenshot();
 }
 
+extern "C" void emKeyboard() {
+	Common::Event eventQ;
+	eventQ.type = Common::EVENT_VIRTUAL_KEYBOARD;
+	g_system->getEventManager()->pushEvent(eventQ);
+}
 #endif

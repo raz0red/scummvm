@@ -274,7 +274,7 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 
 #ifdef WRC
 	EM_ASM(
-		window.emulator.canvas.style.opacity = '1.0';
+		window.emulator.showCanvas(true);
 	);
 #endif
 
