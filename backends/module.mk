@@ -401,6 +401,11 @@ MODULE_OBJS += \
 	events/switchsdl/switchsdl-events.o
 endif
 
+#ifeq ($(BACKEND),emscripten)
+MODULE_OBJS += \
+	events/emscripten/emscripten-events.o
+#endif
+
 ifdef ENABLE_EVENTRECORDER
 MODULE_OBJS += \
 	mixer/null/null-mixer.o \

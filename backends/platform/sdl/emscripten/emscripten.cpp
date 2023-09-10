@@ -21,12 +21,13 @@
 
 #ifdef __EMSCRIPTEN__
 
-
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+//#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #include <emscripten.h>
 
 #ifdef WRC
 #include "engine.h"
+#include "backends/events/emscripten/emscripten-events.h"
 #endif
 #include "backends/platform/sdl/emscripten/emscripten.h"
 
@@ -46,8 +47,23 @@ EM_JS(void, toggleFullscreen, (bool enable), {
 	// }
 });
 
-
 // Overridden functions
+void OSystem_Emscripten::init() {
+	printf("## init\n");
+
+	// Invoke parent implementation of this method
+	OSystem_POSIX::init();
+}
+
+void OSystem_Emscripten::initBackend() {
+
+	// ConfMan.setBool("touchpad_mouse_mode", false)
+    _eventSource = new EmscriptenEventSource();
+
+	// Invoke parent implementation of this method
+	OSystem_POSIX::initBackend();
+}
+
 bool OSystem_Emscripten::hasFeature(Feature f) {
 	if (f == kFeatureFullscreenMode)
 #ifndef WRC
@@ -63,11 +79,16 @@ bool OSystem_Emscripten::hasFeature(Feature f) {
 	if (f == Engine::kSupportsReturnToLauncher)
 		return false;
 #endif
+	if (f == kFeatureTouchpadMode)
+		return true;
+
 	return OSystem_POSIX::hasFeature(f);
 }
 
 bool OSystem_Emscripten::getFeatureState(Feature f) {
-	if (f == kFeatureFullscreenMode) {
+	if (f == kFeatureTouchpadMode) {
+		return ConfMan.getBool("touchpad_mouse_mode");
+	} else if (f == kFeatureFullscreenMode) {
 		return isFullscreen();
 	} else {
 		return OSystem_POSIX::getFeatureState(f);
@@ -75,7 +96,9 @@ bool OSystem_Emscripten::getFeatureState(Feature f) {
 }
 
 void OSystem_Emscripten::setFeatureState(Feature f, bool enable) {
-	if (f == kFeatureFullscreenMode) {
+	if (f == kFeatureTouchpadMode) {
+		ConfMan.setBool("touchpad_mouse_mode", enable);
+	} else if (f == kFeatureFullscreenMode) {
 		toggleFullscreen(enable);
 	} else {
 		OSystem_POSIX::setFeatureState(f, enable);

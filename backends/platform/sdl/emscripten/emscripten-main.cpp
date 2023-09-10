@@ -32,6 +32,7 @@
 
 bool emPaused = false;
 bool emShowScummMenu = false;
+bool emFilterMouseEvents = false;
 
 int main(int argc, char *argv[]) {
 
@@ -50,23 +51,26 @@ int main(int argc, char *argv[]) {
 		printf("%s\n", argv[i]);
 	}
 
-	printf("## Starting main.\n");
-
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
 
-	printf("## After main.\n");
-
 	// Free OSystem
 	g_system->destroy();
-
-	printf("## After destroy.\n");
 
 	EM_ASM(
 		window.emulator.onExit();
 	);
 
 	return res;
+}
+
+extern "C" void emSetTouchpadMouseMode(int enable) {
+	printf("## emSetTouchpadMouseMode: %d\n", enable);
+	ConfMan.setBool("touchpad_mouse_mode", enable);
+}
+
+extern "C" void emSetFilterMouseEvents(int filter) {
+	emFilterMouseEvents = filter;
 }
 
 extern int getSdlFilterModeEvent();
@@ -115,7 +119,6 @@ extern "C" void emQuit() {
 	g_system->getEventManager()->pushEvent(eventQ);
 }
 
-// Common::Error Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 extern "C" int saveGame() {
 	auto err = g_engine->saveGameState(0, "foo", false);
 	printf("## Save result: %d\n", err.getCode());
