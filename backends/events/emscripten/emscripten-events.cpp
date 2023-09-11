@@ -35,25 +35,27 @@
 #include "common/events.h"
 #include "common/config-manager.h"
 
-// TODO: Set this only on resize
+// TODO: Check in client every second and update if changed...
+
+extern int emScreenWidth;
+extern int emScreenHeight;
+
 static int getTouchScreenWidth() {
-	return EM_ASM_INT({
-  		return window.innerWidth;
-	});
+	return emScreenWidth;
 }
 
-// TODO: Set this only on resize
 static int getTouchScreenHeight() {
-	return EM_ASM_INT({
-  		return window.innerHeight;
-	});
+	return emScreenHeight;
 }
 
 extern bool emFilterMouseEvents;
 
 EmscriptenEventSource::EmscriptenEventSource() {
 	printf("EmscriptenEventSource::EmscriptenEventSource\n");
+	reset();
+}
 
+void EmscriptenEventSource::reset() {
 	for (int port = 0; port < SCE_TOUCH_PORT_MAX_NUM; port++) {
 		for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 			_finger[port][i].id = -1;
@@ -351,16 +353,21 @@ void EmscriptenEventSource::preprocessFingerMotion(SDL_Event *event) {
 					if (numFingersDownLong == 2) {
 						simulatedButton = SDL_BUTTON_LEFT;
 						_multiFingerDragging[port] = DRAG_TWO_FINGER;
+						// printf("Two finger drag.\n");
 					} else {
 						simulatedButton = SDL_BUTTON_RIGHT;
 						_multiFingerDragging[port] = DRAG_THREE_FINGER;
+						// printf("Three finger drag.\n");
+
 					}
 					SDL_Event ev;
 					ev.type = SDL_MOUSEBUTTONDOWN;
 					ev.button.button = simulatedButton;
 					ev.button.x = mouseDownX;
 					ev.button.y = mouseDownY;
+					ev.user.code = 1337;
 					SDL_PushEvent(&ev);
+					// printf("mouse down: %d\n", simulatedButton);
 				}
 			}
 		}
@@ -435,6 +442,8 @@ void EmscriptenEventSource::finishSimulatedMouseClicks() {
 					ev.button.y = _mouseY;
 					ev.user.code = 1337;
 					SDL_PushEvent(&ev);
+
+					// printf("mouse up: %d\n", simulatedButton);
 
 					_simulatedClickStartTime[port][i] = 0;
 				}

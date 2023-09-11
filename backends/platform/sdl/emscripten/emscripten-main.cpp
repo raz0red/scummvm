@@ -26,6 +26,7 @@
 
 #if defined(__EMSCRIPTEN__)
 #include "backends/platform/sdl/emscripten/emscripten.h"
+#include "backends/events/emscripten/emscripten-events.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 #include <emscripten.h>
@@ -33,6 +34,8 @@
 bool emPaused = false;
 bool emShowScummMenu = false;
 bool emFilterMouseEvents = false;
+
+extern EmscriptenEventSource* emEventSource;
 
 int main(int argc, char *argv[]) {
 
@@ -67,10 +70,12 @@ int main(int argc, char *argv[]) {
 extern "C" void emSetTouchpadMouseMode(int enable) {
 	printf("## emSetTouchpadMouseMode: %d\n", enable);
 	ConfMan.setBool("touchpad_mouse_mode", enable);
+	emEventSource->reset();
 }
 
 extern "C" void emSetFilterMouseEvents(int filter) {
 	emFilterMouseEvents = filter;
+	emEventSource->reset();
 }
 
 extern int getSdlFilterModeEvent();
@@ -144,4 +149,14 @@ extern "C" void emKeyboard() {
 	eventQ.type = Common::EVENT_VIRTUAL_KEYBOARD;
 	g_system->getEventManager()->pushEvent(eventQ);
 }
+
+int emScreenWidth = 0;
+int emScreenHeight = 0;
+
+extern "C" void emSetScreenSize(int width, int height){
+	printf("## Set size: %d, %d\n", width, height);
+	emScreenWidth = width;
+	emScreenHeight = height;
+}
+
 #endif

@@ -34,6 +34,7 @@
 class EmscriptenEventSource : public SdlEventSource {
 public:
 	EmscriptenEventSource();
+	void reset();
 	bool pollEvent(Common::Event &event) override;
 protected:
 	void preprocessEvents(SDL_Event *event) override;

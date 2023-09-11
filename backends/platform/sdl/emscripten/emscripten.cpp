@@ -55,10 +55,13 @@ void OSystem_Emscripten::init() {
 	OSystem_POSIX::init();
 }
 
+EmscriptenEventSource* emEventSource;
+
 void OSystem_Emscripten::initBackend() {
 
 	// ConfMan.setBool("touchpad_mouse_mode", false)
-    _eventSource = new EmscriptenEventSource();
+	emEventSource = new EmscriptenEventSource();
+    _eventSource = emEventSource;
 
 	// Invoke parent implementation of this method
 	OSystem_POSIX::initBackend();
