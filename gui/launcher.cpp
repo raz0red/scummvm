@@ -19,6 +19,10 @@
  *
  */
 
+#ifdef WRC
+#include <emscripten.h>
+#endif
+
 #include "base/version.h"
 
 #include "common/config-manager.h"
@@ -530,8 +534,15 @@ void LauncherDialog::loadGame(int item) {
 			dialog.runModal();
 		}
 	} else {
+#ifndef WRC
 		MessageDialog dialog(_("ScummVM could not find any engine capable of running the selected game!"), _("OK"));
 		dialog.runModal();
+#else
+		EM_ASM(
+			window.emulator.onGameNotFound();
+			window.emulator.onExit();
+		);
+#endif
 	}
 }
 

@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/error.h"
 #include "gui/message.h"
 #include "gui/error.h"
@@ -28,16 +30,26 @@
 namespace GUI {
 
 void displayErrorDialog(const Common::U32String &text) {
+#ifdef WRC
+	printf("ERROR: %s\n", Common::convertFromU32String(text).c_str());
+#else
 	GUI::MessageDialog alert(text);
 	alert.runModal();
+#endif
 }
 
 void displayErrorDialog(const Common::Error &error, const Common::U32String &extraText) {
+#ifdef WRC
+	printf("ERROR (extra): %s, %s\n",
+		Common::convertFromU32String(extraText).c_str(),
+		Common::convertFromU32String(error.getDesc()).c_str());
+#else
 	Common::U32String errorText(extraText);
 	errorText += Common::U32String(" ");
 	errorText += _(error.getDesc());
 	GUI::MessageDialog alert(errorText);
 	alert.runModal();
+#endif
 }
 
 } // End of namespace GUI

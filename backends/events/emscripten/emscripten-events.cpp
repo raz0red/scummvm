@@ -178,12 +178,6 @@ void EmscriptenEventSource::preprocessFingerUp(SDL_Event *event) {
 		}
 	}
 
-	// if (numFingersDown > 1) {
-	// 	EM_ASM(
-	// 		window.alert('more than one finger down');;
-	// 	);
-	// }
-
 	int x = _mouseX;
 	int y = _mouseY;
 
