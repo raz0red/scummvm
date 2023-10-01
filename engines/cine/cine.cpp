@@ -310,6 +310,9 @@ void CineEngine::showSplashScreen() {
 		uint32 now = g_system->getMillis();
 
 		while (!done && g_system->getMillis() - now < 2000) {
+#ifdef WRC
+			g_system->delayMillis(0);
+#endif
 			Common::Event event;
 			while (eventMan->pollEvent(event)) {
 				if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) {

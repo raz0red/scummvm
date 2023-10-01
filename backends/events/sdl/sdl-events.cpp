@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/scummsys.h"
 
 #if defined(SDL_BACKEND)
@@ -397,7 +399,19 @@ Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDL_Keycode key) {
 	}
 }
 
+#ifdef WRC
+extern "C" bool getVKeyEvent(Common::Event &evt);
+#endif
+
 bool SdlEventSource::pollEvent(Common::Event &event) {
+
+#ifdef WRC
+	if (getVKeyEvent(event)) {
+//printf("Key: %d, %d, %d, %d\n", event.type, event.kbd.keycode, event.kbd.ascii, event.kbd.flags);
+		return true;
+	}
+#endif
+
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	// In case we still need to send a key up event for a key down from a

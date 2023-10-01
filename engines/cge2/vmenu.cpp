@@ -153,10 +153,16 @@ void VMenu::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 		n = _items - 1 - n;
 
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+#ifdef WRC
+		if (ttsMan != nullptr ) {
+#endif
 		if (_lastN != n) {
 			ttsMan->say(_menu[n]->_text, Common::TextToSpeechManager::INTERRUPT);
 			_lastN = n;
 		}
+#ifdef WRC
+		}
+#endif
 
 		if (ok && (mask & kMouseLeftUp)) {
 			_items = 0;

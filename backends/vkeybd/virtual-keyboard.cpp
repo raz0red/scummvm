@@ -19,6 +19,11 @@
  *
  */
 
+#ifdef WRC
+#include <list>
+using namespace std;
+#endif
+
 #include "common/scummsys.h"
 
 #ifdef ENABLE_VKEYBD
@@ -37,6 +42,19 @@
 
 #define KEY_START_CHAR ('[')
 #define KEY_END_CHAR (']')
+
+#ifdef WRC
+static list<Common::Event> events;
+
+extern "C" bool getVKeyEvent(Common::Event &evt) {
+	if (events.size() > 0) {
+		evt = events.front();
+		events.pop_front();
+		return true;
+	}
+	return false;
+}
+#endif
 
 namespace Common {
 
@@ -261,11 +279,22 @@ void VirtualKeyboard::show() {
 		// push keydown & keyup events into the event manager
 		Event evt;
 		while (!_keyQueue.empty()) {
+#ifndef WRC
 			evt.kbd = _keyQueue.pop();
 			evt.type = EVENT_KEYDOWN;
 			eventMan->pushEvent(evt);
 			evt.type = EVENT_KEYUP;
 			eventMan->pushEvent(evt);
+#else
+			evt.kbd = _keyQueue.pop();
+			evt.type = EVENT_KEYDOWN;
+			events.push_back(evt);
+			
+			Event evt2;
+			evt2 = evt;
+			evt2.type = EVENT_KEYUP;
+			events.push_back(evt2);
+#endif
 		}
 	} else {
 		_keyQueue.clear();
@@ -341,7 +370,7 @@ void VirtualKeyboard::KeyPressQueue::insertKey(KeyState key) {
 	while (char ch = *k++)
 		_keysStr.insertChar(ch, _strPos++);
 #ifndef WRC
-	keysStr.insertChar(KEY_END_CHAR, _strPos++);
+	_keysStr.insertChar(KEY_END_CHAR, _strPos++);
 #endif
 
 	VirtualKeyPress kp;

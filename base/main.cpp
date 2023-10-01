@@ -176,8 +176,6 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	}
 #endif
 
-// TODO: Call back into JS layer to inform is 3d
-
 	// Determine the game data path, for validation and error messages
 	Common::FSNode dir(ConfMan.get("path"));
 	Common::String target = ConfMan.getActiveDomainName();

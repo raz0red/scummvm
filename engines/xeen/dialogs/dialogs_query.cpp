@@ -69,7 +69,11 @@ bool Confirm::execute(const Common::String &msg, int mode) {
 	while (!_vm->shouldExit()) {
 		_buttonValue = 0;
 		while (!_vm->shouldExit() && !_buttonValue) {
+#ifndef WRC
 			events.pollEvents();
+#else
+			events.pollEventsAndWait();
+#endif
 			checkEvents(_vm);
 		}
 

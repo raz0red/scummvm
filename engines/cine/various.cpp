@@ -971,7 +971,9 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 //				gfxRedrawMouseCursor();
 //			}
 		}
-
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
 	} while (!var_A && !g_cine->shouldQuit());
 
 	assert(!needMouseSave);
@@ -1906,6 +1908,10 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 	renderer->pushMenu(inputBox);
 
 	while (!quit) {
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
+
 		if (redraw) {
 			inputBox->setInput(inputString, inputPos);
 			renderer->drawFrame();

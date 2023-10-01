@@ -258,7 +258,7 @@ if [[ "configure" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$)
   cd "${ROOT_FOLDER}"
   echo "Running configure"
   # TODO: Figure out how configure could guess the host
-  emconfigure ./configure --host=wasm32-unknown-emscripten --build=wasm32-unknown-emscripten --enable-vkeybd ${CONFIGURE_ARGS} ${LIBS_FLAGS}
+  emconfigure ./configure --host=wasm32-unknown-emscripten --build=wasm32-unknown-emscripten --enable-vkeybd --enable-release-mode --disable-debug --enable-optimizations ${CONFIGURE_ARGS} ${LIBS_FLAGS}
 
   # TODO: configure currently doesn't clean up all files it creates
   rm scummvm-conf.*

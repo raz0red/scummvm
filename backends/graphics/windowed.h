@@ -117,9 +117,11 @@ protected:
 		const int sourceWidth = _activeArea.width;
 		const int sourceHeight = _activeArea.height;
 
+#ifndef WRC
 		if (sourceWidth == 0 || sourceHeight == 0) {
 			error("convertVirtualToWindow called without a valid draw rect");
 		}
+#endif
 
 		int windowX = targetX + (x * targetWidth + sourceWidth / 2) / sourceWidth;
 		int windowY = targetY + (y * targetHeight + sourceHeight / 2) / sourceHeight;

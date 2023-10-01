@@ -185,6 +185,7 @@ void TextObject::setupText() {
 	delete[] _lines;
 	if (msg.size() == 0) {
 		_lines = nullptr;
+		_numberLines = 0;
 		return;
 	}
 
@@ -296,6 +297,8 @@ void TextObject::setupText() {
 
 int TextObject::getLineX(int line) const {
 	int x = _x;
+	if (line >= _numberLines)
+		return 0;
 	if (_justify == CENTER)
 		x = _x - (_font->getKernedStringLength(_lines[line]) / 2);
 	else if (_justify == RJUSTIFY)

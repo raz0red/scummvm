@@ -44,7 +44,9 @@ extern ImuseTable grimDemoSeqMusicTable[];
 
 void Imuse::timerHandler(void *refCon) {
 	Imuse *imuse = (Imuse *)refCon;
-	imuse->callback();
+	if (imuse) {
+		imuse->callback();
+	}
 }
 
 Imuse::Imuse(int fps, bool demo) {

@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 //
 // Game loop
 //
@@ -923,6 +925,10 @@ static int UpdateWaitMode() {
 
 // Run single game iteration; calls UpdateGameOnce() internally
 static int GameTick() {
+#ifdef WRC
+	g_system->delayMillis(0);
+#endif
+
 	if (_G(displayed_room) < 0)
 		quit("!A blocking function was called before the first room has been loaded");
 

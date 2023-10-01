@@ -562,6 +562,10 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 				menuCommandLen = 0;
 			}
 		}
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
+
 	} while (!shouldQuit() && !_restartRequested);
 
 	hideMouse();

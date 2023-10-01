@@ -258,6 +258,9 @@ Common::String AdlEngine::inputString(byte prompt) const {
 	}
 }
 
+#ifdef WRC
+static int count = 0;
+#endif
 byte AdlEngine::inputKey(bool showCursor) const {
 	byte key = 0;
 
@@ -285,14 +288,26 @@ byte AdlEngine::inputKey(bool showCursor) const {
 			};
 		}
 
+#ifdef WRC
+		if (count++ == 100) {
+			count = 0;
+			_display->renderText();
+			g_system->delayMillis(0);
+		}
+#else
 		// If debug script was activated in the meantime, abort input
 		if (_inputScript && !_scriptPaused)
 			return _display->asciiToNative('\r');
 
 		_display->renderText();
 		g_system->delayMillis(16);
+#endif
 	}
 
+#ifdef WRC
+	_display->renderText();
+	g_system->delayMillis(0);
+#endif
 	_display->showCursor(false);
 
 	return key;

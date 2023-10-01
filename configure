@@ -2861,12 +2861,13 @@ EOF
 		fi
 		;;
 	ds)
-		_optimization_level=-Os
+		_optimization_level=-O3
 		append_var DEFINES "-D__DS__"
 		append_var DEFINES "-DNDS"
 		append_var DEFINES "-DARM9"
 		append_var DEFINES "-DARM"
 		append_var DEFINES "-DNONSTANDARD_PORT"
+		append_var CXXFLAGS "-O3"
 		append_var CXXFLAGS "-isystem $DEVKITPRO/libnds/include"
 		append_var CXXFLAGS "-isystem $DEVKITPRO/portlibs/nds/include"
 		append_var CXXFLAGS "-isystem $DEVKITPRO/portlibs/armv5te/include"
@@ -2902,6 +2903,9 @@ EOF
 		append_var DEFINES "-DEMSCRIPTEN"
 		append_var DEFINES "-DWRC"
 		add_line_to_config_mk 'EMSCRIPTEN = 1'
+
+		# _optimization_level=-O3
+		# append_var LDFLAGS "-O3"
 
 		if test "$_debug_build" = yes; then
 			_optimization_level=-O2
