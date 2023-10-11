@@ -159,4 +159,8 @@ extern "C" void emSetScreenSize(int width, int height){
 	emScreenHeight = height;
 }
 
+extern "C" int emPing() {
+	return 1;
+}
+
 #endif

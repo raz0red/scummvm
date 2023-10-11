@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "kyra/kyra_v1.h"
 #include "kyra/sound/sound_intern.h"
 #include "kyra/resource/resource.h"
@@ -28,6 +30,11 @@
 #include "common/error.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+
+#ifdef WRC
+static int inputCount = 0;
+static int eventCount = 0;
+#endif
 
 namespace Kyra {
 
@@ -329,6 +336,14 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 	}
 
 	GUI *guiInstance = gui();
+
+#ifdef WRC
+	if (inputCount++ == 10) {
+		inputCount = 0;
+		g_system->delayMillis(0);
+	}
+#endif
+
 	if (guiInstance) {
 		if (keys)
 			return guiInstance->processButtonList(buttonList, keys | eventFlag, mouseWheel);

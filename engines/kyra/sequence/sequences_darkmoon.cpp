@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #ifdef ENABLE_EOB
 
 #include "kyra/engine/darkmoon.h"
@@ -206,8 +208,15 @@ int DarkMoonEngine::mainMenuLoop() {
 		_gui->simpleMenu_setup(6, 0, _mainMenuStrings, -1, 0, 0, _configRenderMode == Common::kRenderCGA ? 1 : guiSettings()->colors.guiColorWhite, guiSettings()->colors.guiColorLightRed, guiSettings()->colors.guiColorBlack);
 		_screen->updateScreen();
 
-		while (sel == -1 && !shouldQuit())
+		while (sel == -1 && !shouldQuit()) {
 			sel = _gui->simpleMenu_process(6, _mainMenuStrings, 0, -1, 0);
+#ifdef WRC
+			_system->delayMillis(0);
+#endif
+		}
+#ifdef WRC
+			_system->delayMillis(0);
+#endif
 	} while ((sel < 0 || sel > 5) && !shouldQuit());
 
 	if (_flags.platform == Common::kPlatformFMTowns && sel == 2) {
@@ -1731,6 +1740,10 @@ void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim
 	int seq = 0;
 
 	while (_vm->sound()->musicEnabled() && _vm->sound()->checkTrigger() < index && !(_vm->skipFlag() || _vm->shouldQuit())) {
+#ifdef WRC
+		_system->delayMillis(0);
+#endif
+
 		if (introUpdateAnim) {
 			animCommand(30 | seq);
 			seq ^= 1;

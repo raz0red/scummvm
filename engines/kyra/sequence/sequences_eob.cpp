@@ -2285,8 +2285,15 @@ int EoBEngine::mainMenuLoop() {
 			_screen->sega_getRenderer()->render(0);
 		_screen->updateScreen();
 
-		while (sel == -1 && !shouldQuit())
+		while (sel == -1 && !shouldQuit()) {
 			sel = _gui->simpleMenu_process(8, _mainMenuStrings, 0, -1, 0);
+#ifdef WRC
+			_system->delayMillis(0);
+#endif
+		}
+#ifdef WRC
+		_system->delayMillis(0);
+#endif
 	} while ((sel < 0 || sel > 5) && !shouldQuit());
 
 	return sel + 1;

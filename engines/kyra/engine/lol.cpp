@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #ifdef ENABLE_LOL
 
 #include "kyra/engine/lol.h"
@@ -660,7 +662,7 @@ uint8 *LoLEngine::getItemIconShapePtr(int index) {
 int LoLEngine::mainMenu() {
 	bool hasSave = false;
 	for (int i = 0; i < 20 && !hasSave; ++i) {
-		if (saveFileLoadable(i)) 
+		if (saveFileLoadable(i))
 			hasSave = true;
 	}
 

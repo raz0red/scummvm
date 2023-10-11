@@ -63,6 +63,11 @@ void OSystem_Emscripten::initBackend() {
 	emEventSource = new EmscriptenEventSource();
     _eventSource = emEventSource;
 
+	// ConfMan.registerDefault("gfx_mode", "2x");
+	// if (!ConfMan.hasKey("gfx_mode")) {
+	// 	ConfMan.set("gfx_mode", "2x");
+	// }
+
 	// Invoke parent implementation of this method
 	OSystem_POSIX::initBackend();
 }

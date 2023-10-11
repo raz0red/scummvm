@@ -19,6 +19,9 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
 #include "kyra/engine/kyra_rpg.h"

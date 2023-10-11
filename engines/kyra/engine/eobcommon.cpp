@@ -746,6 +746,10 @@ void EoBCoreEngine::runLoop() {
 		snd_updateLevelScore();
 		snd_updateEnvironmentalSfx(0);
 		turnUndeadAuto();
+
+#ifdef WRC
+		_system->delayMillis(0);
+#endif
 	}
 }
 
@@ -1675,8 +1679,15 @@ int EoBCoreEngine::runDialogue(int dialogueTextId, int numStr, int loopButtonId,
 			setupDialogueButtons(0, numStr, args);
 		va_end(args);
 
-		while (res == 0 && !shouldQuit())
+		while (res == 0 && !shouldQuit()) {
+#ifdef WRC
+			g_system->delayMillis(0);
+#endif
 			res = processDialogue();
+		}
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
 	} while (res == loopButtonId && !shouldQuit());
 
 	if (_flags.platform != Common::kPlatformSegaCD)

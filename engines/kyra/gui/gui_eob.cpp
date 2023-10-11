@@ -2212,6 +2212,9 @@ void GUI_EoB::runCampMenu() {
 	Button *buttonList = 0;
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
 		if (newMenu != -1) {
 			drawCampMenu();
 			if (newMenu == 2) {
@@ -2495,6 +2498,9 @@ bool GUI_EoB::runLoadMenu(int x, int y, bool fromMainMenu) {
 	_screen->modifyScreenDim(11, dm->sx + (x >> 3), dm->sy + y, dm->w, dm->h);
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
 		updateSaveSlotsList(_vm->_targetName);
 
 		_vm->useMainMenuGUISettings(fromMainMenu);
@@ -2543,6 +2549,9 @@ bool GUI_EoB::confirmDialogue2(int dim, int id, int deflt) {
 		drawMenuButtonBox(x[i], y, 32, 14, false, false);
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
 		Common::Point p = _vm->getMousePos();
 		if (_vm->posWithinRect(p.x, p.y, x[0], y, x[0] + 32, y + 14))
 			newHighlight = 0;
@@ -2610,6 +2619,9 @@ void GUI_EoB::messageDialogue(int dim, int id, int buttonTextCol) {
 	_screen->updateScreen();
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
 		int inputFlag = _vm->checkInput(0, false, 0) & 0x8FF;
 		_vm->removeInputTop();
 
@@ -2649,6 +2661,9 @@ void GUI_EoB::messageDialogue2(int dim, int id, int buttonTextCol) {
 	_screen->updateScreen();
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
 		int inputFlag = _vm->checkInput(0, false, 0) & 0x8FF;
 		_vm->removeInputTop();
 
@@ -2740,8 +2755,14 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 	do {
 		in = 0;
 		_keyPressed.reset();
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
 
 		while (!in && !_vm->shouldQuit()) {
+#ifdef WRC
+			g_system->delayMillis(0);
+#endif
 			if (next <= _vm->_system->getMillis()) {
 				if (_vm->_flags.platform == Common::kPlatformSegaCD) {
 					memset(segaCharBuf, cursorState ? 0 : cursorColor, 32);
@@ -3124,6 +3145,9 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 	_screen->modifyScreenDim(11, dm->sx + (x >> 3), dm->sy + y, dm->w, dm->h);
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
 		updateSaveSlotsList(_vm->_targetName);
 		int slot = selectSaveSlotDialog(x, y, 0);
 		if (slot > _numSlotsVisible - 1) {
@@ -3224,6 +3248,9 @@ int GUI_EoB::selectSaveSlotDialog(int x, int y, int id) {
 	int slot = -1;
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
 		int inputFlag = _vm->checkInput(0, false, 0) & 0x8FF;
 		_vm->removeInputTop();
 		bool clickedButton = false;
@@ -3683,6 +3710,9 @@ void GUI_EoB::scribeScrollDialogue() {
 				int newHighLight = 0;
 
 				while (s && !_vm->shouldQuit()) {
+#ifdef WRC
+					g_system->delayMillis(0);
+#endif
 					if (redraw) {
 						s = 0;
 						for (int i = 0; i < 32 && s < 6; i++) {
@@ -4077,6 +4107,9 @@ bool GUI_EoB::confirmDialogue(int id) {
 	bool result = false;
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
 		if (newHighlight != lastHighlight) {
 			if (lastHighlight != -1)
 				drawMenuButton(_vm->gui_getButton(buttonList, lastHighlight + 33), false, false, true);
@@ -4211,6 +4244,9 @@ int GUI_EoB::selectCharacterDialogue(int id) {
 	Screen::FontId of = _screen->setFont(_vm->_conFont);
 
 	while (result == -2 && !_vm->shouldQuit()) {
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
 		int inputFlag = _vm->checkInput(buttonList, false, 0);
 		_vm->removeInputTop();
 

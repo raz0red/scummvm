@@ -566,7 +566,11 @@ void CharacterGenerator::processButtonClick(int index) {
 	drawButton(index, 1, 0);
 	if (!(_vm->game() == GI_EOB1 && _vm->_flags.platform == Common::kPlatformPC98))
 		_vm->snd_playSoundEffect(76);
+#ifndef WRC
 	_vm->_system->delayMillis(80);
+#else
+	_vm->_system->delayMillis(0);
+#endif
 	drawButton(index, 0, 0);
 }
 
@@ -711,6 +715,9 @@ int CharacterGenerator::raceSexMenu() {
 	int16 res = -1;
 
 	while (res == -1 && !_vm->shouldQuit()) {
+#ifdef WRC
+		_vm->_system->delayMillis(0);
+#endif
 		res = _vm->_gui->simpleMenu_process(1, _chargenRaceSexStrings, 0, -1, 0);
 		if (_vm->_flags.platform == Common::kPlatformSegaCD)
 			_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
@@ -753,6 +760,9 @@ int CharacterGenerator::classMenu(int raceSex) {
 	int16 res = -1;
 
 	while (res == -1 && !_vm->shouldQuit()) {
+#ifdef WRC
+		_vm->_system->delayMillis(0);
+#endif
 		updateMagicShapes();
 		int in = getInput(0) & 0xFF;
 		Common::Point mp = _vm->getMousePos();
@@ -813,6 +823,9 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 	int16 res = -1;
 
 	while (res == -1 && !_vm->shouldQuit()) {
+#ifdef WRC
+		_vm->_system->delayMillis(0);
+#endif
 		updateMagicShapes();
 		int in = getInput(0) & 0xFF;
 		Common::Point mp = _vm->getMousePos();
@@ -841,6 +854,10 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 }
 
 int CharacterGenerator::getInput(Button *buttonList) {
+#ifdef WRC
+	_vm->_system->delayMillis(0);
+#endif
+
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return _vm->checkInput(buttonList, false, 0);
 
@@ -1036,6 +1053,9 @@ void CharacterGenerator::faceSelectMenu() {
 	int box = 1;
 
 	while (res == -1 && !_vm->shouldQuit()) {
+#ifdef WRC
+		_vm->_system->delayMillis(0);
+#endif
 		int8 shpOld = shp;
 
 		for (int i = 0; i < 4; i++) {
@@ -1916,6 +1936,9 @@ int TransferPartyWiz::selectCharactersMenu() {
 	bool update = false;
 
 	for (bool loop = true; loop && (!_vm->shouldQuit());) {
+#ifdef WRC
+		_vm->_system->delayMillis(0);
+#endif
 		int inputFlag = _vm->checkInput(0, false, 0) & 0x8FF;
 		_vm->removeInputTop();
 
@@ -1966,7 +1989,11 @@ int TransferPartyWiz::selectCharactersMenu() {
 		int x = (highlight - 6) * 268 + 4;
 		_vm->gui_drawBox(x, 148, 43, 12, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.fill, -1);
 		_screen->updateScreen();
+#ifndef WRC
 		_vm->_system->delayMillis(80);
+#else
+		_vm->_system->delayMillis(0);
+#endif
 		_vm->gui_drawBox(x, 148, 43, 12, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, -1);
 		_screen->updateScreen();
 

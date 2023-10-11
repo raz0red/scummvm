@@ -19,6 +19,11 @@
  *
  */
 
+#ifdef WRC
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include <emscripten.h>
+#endif
+
 #include "common/debug.h"
 #include "common/util.h"
 #include "common/file.h"
@@ -433,6 +438,12 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 	if (gameDescriptor.gameSupportLevel == kWarningGame
 			&& !Engine::warnUserAboutUnsupportedGame(gameDescriptor.extra))
 		return Common::kUserCanceled;
+
+#ifdef WRC
+	EM_ASM({
+		window.emulator.afterCompatibilityCheck();
+	});
+#endif
 
 	if (gameDescriptor.gameSupportLevel == kUnsupportedGame) {
 		Engine::errorUnsupportedGame(gameDescriptor.extra);

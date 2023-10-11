@@ -731,6 +731,7 @@ void Engine::openMainMenuDialog() {
 }
 
 bool Engine::warnUserAboutUnsupportedGame(Common::String msg) {
+#ifndef WRC
 	if (ConfMan.getBool("enable_unsupported_game_warning")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan != nullptr) {
@@ -750,6 +751,15 @@ bool Engine::warnUserAboutUnsupportedGame(Common::String msg) {
 
 		return status == GUI::kMessageOK;
 	}
+#else
+	if (!msg.empty()) {
+		printf("## unsupported message: %s\n", msg.c_str());
+	}
+
+	EM_ASM({
+		window.emulator.showCompatibilityPrompt();
+	});
+#endif
 	return true;
 }
 

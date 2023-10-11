@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "kyra/script/script_tim.h"
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound.h"
@@ -193,6 +195,10 @@ void TIMInterpreter::setLangData(const char *filename) {
 	_langData = _vm->resource()->fileData(filename, nullptr);
 }
 
+#ifdef WRC
+static uint32 next = 0;
+#endif
+
 int TIMInterpreter::exec(TIM *tim, bool loop) {
 	if (!tim)
 		return 0;
@@ -203,7 +209,19 @@ int TIMInterpreter::exec(TIM *tim, bool loop) {
 		_currentTim->func[0].nextTime = _currentTim->func[0].lastTime = _system->getMillis();
 	}
 
+#ifdef WRC
+	next = _system->getMillis() + 20;
+#endif
+
 	do {
+#ifdef WRC
+		uint32 now = _system->getMillis();
+		if (now > next) {
+			g_system->delayMillis(0);
+			next = now + 20;
+		}
+#endif
+
 		update();
 
 		for (_currentFunc = 0; _currentFunc < TIM::kCountFuncs; ++_currentFunc) {

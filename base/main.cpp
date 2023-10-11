@@ -349,6 +349,13 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	system.getEventManager()->purgeKeyboardEvents();
 	system.getEventManager()->purgeMouseEvents();
 
+
+#ifdef WRC
+	EM_ASM({
+		window.emulator.preRun();
+	});
+#endif
+
 	// Run the engine
 	Common::Error result = engine->run();
 

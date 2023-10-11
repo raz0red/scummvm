@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #ifdef ENABLE_LOL
 
 #include "kyra/gui/gui_lol.h"
