@@ -2902,7 +2902,7 @@ EOF
 
 		append_var DEFINES "-DEMSCRIPTEN"
 		append_var DEFINES "-DWRC"
-		add_line_to_config_mk 'EMSCRIPTEN = 1'
+				add_line_to_config_mk 'EMSCRIPTEN = 1'
 
 		# _optimization_level=-O3
 		# append_var LDFLAGS "-O3"
@@ -3289,6 +3289,7 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		wasm*-emscripten)
+			append_var DEFINES "-DDISABLE_TEXT_CONSOLE"
 			_backend="sdl"
 			# Disable cloud and SDL_Net as this is handled in the browser
 			_cloud=no

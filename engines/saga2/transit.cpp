@@ -105,8 +105,15 @@ void enableUserControls();
 
 void fadeDown() {
 	if (g_vm->_fadeDepth++ == 0) {
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
 		g_vm->_pal->beginFade(g_vm->_pal->_darkPalette, 20);
-		while (g_vm->_pal->updatePalette());
+		while (g_vm->_pal->updatePalette()) {
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
+		}
 		clearTileAreaPort();
 		blackOut();
 		disablePaletteChanges();
@@ -118,13 +125,20 @@ void fadeDown() {
 
 void fadeUp() {
 	if (--g_vm->_fadeDepth == 0) {
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
 		enableUserControls();
 		updateMainDisplay();
 		drawMainDisplay();
 		reDrawScreen();
 		enablePaletteChanges();
 		g_vm->_pal->beginFade(g_vm->_currentMapNum != 0 ? g_vm->_pal->_noonPalette : &g_vm->_pal->_newPalette, 20);
-		while (g_vm->_pal->updatePalette()) ;
+		while (g_vm->_pal->updatePalette()) {
+#ifdef WRC
+		g_system->delayMillis(0);
+#endif
+		}
 	}
 }
 

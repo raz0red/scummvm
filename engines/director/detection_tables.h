@@ -3011,7 +3011,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("fct",		  "", " Felix Cartoon Toolbox", "7446214d1f3b0309e51bc477b03096c9", 295690, 404),
 	WINGAME1("fct",		  "", "FELIX.EXE",	  "6475efb8f19537e6753ba898daaf8c8d", 694477, 400),
 	MACGAME1("fctplayer", "", "Mac Felix Cartoon Player", "7446214d1f3b0309e51bc477b03096c9", 295667, 404),
+#ifndef WRC
 	WINGAME1("fctplayer", "", "PLAYER.EXE",	  "194c9d45a603a1a131c39ac43b54d8aa", 834551, 404),
+#endif
 	WINGAME1("fctexport", "", "TRANSFMR.EXE", "ca58379b982a714d975358421fe4be50", 1542693, 400),
 	MACDEMO1("fct",		  "Demo", "BIG TOP DEMO", "ea646eccc9a53f44ce082459d4809a06", 486703, 404),
 

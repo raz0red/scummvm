@@ -55,6 +55,11 @@ void FrameLimiter::delayBeforeSwap() {
 	if (_enabled && frameDuration < _speedLimitMs) {
 		_system->delayMillis(_speedLimitMs - frameDuration);
 	}
+#ifdef WRC
+	else {
+		_system->delayMillis(0);
+	}
+#endif
 }
 
 void FrameLimiter::pause(bool pause) {

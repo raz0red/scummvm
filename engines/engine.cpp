@@ -455,6 +455,7 @@ void GUIErrorMessage(const Common::String &msg, const char *url) {
 }
 
 void GUIErrorMessage(const Common::U32String &msg, const char *url) {
+#ifndef WRC
 	g_system->setWindowCaption(_("Error"));
 	g_system->beginGFXTransaction();
 		initCommonGFX();
@@ -470,6 +471,9 @@ void GUIErrorMessage(const Common::U32String &msg, const char *url) {
 	} else {
 		error("%s", msg.encode().c_str());
 	}
+#else
+	error("%s", msg.encode().c_str());
+#endif
 }
 
 void GUIErrorMessageFormat(const char *fmt, ...) {

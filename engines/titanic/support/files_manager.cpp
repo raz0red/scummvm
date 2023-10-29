@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/zlib.h"
@@ -49,6 +51,9 @@ bool CFilesManager::loadResourceIndex() {
 		return false;
 	}
 
+#ifdef WRC
+	printf("titanic.dat version: %d\n", _version);
+#endif
 	if (_version != 5) {
 		GUIErrorMessage("titanic.dat is out of date");
 		return false;

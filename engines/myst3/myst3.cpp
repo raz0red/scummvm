@@ -764,6 +764,10 @@ void Myst3Engine::drawFrame(bool noSwap) {
 		_state->updateFrameCounters();
 		_frameLimiter->startFrame();
 	}
+
+#ifdef WRC
+	g_system->delayMillis(0);
+#endif
 }
 
 bool Myst3Engine::isInventoryVisible() {

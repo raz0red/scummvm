@@ -109,7 +109,11 @@ void Events::pollEvents() {
 
 void Events::pollEventsAndWait() {
 	pollEvents();
+#ifndef WRC
 	g_system->delayMillis(10);
+#else
+	g_system->delayMillis(0);
+#endif
 
 	CGameManager *gameManager = g_vm->_window->_gameManager;
 	if (gameManager) {
