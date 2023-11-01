@@ -472,7 +472,10 @@ void GUIErrorMessage(const Common::U32String &msg, const char *url) {
 		error("%s", msg.encode().c_str());
 	}
 #else
-	error("%s", msg.encode().c_str());
+	EM_ASM({
+		window.emulator.onExitWithMessage($0);
+	}, msg.encode().c_str());
+	// error("%s", msg.encode().c_str());
 #endif
 }
 

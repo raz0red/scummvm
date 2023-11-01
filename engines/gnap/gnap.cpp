@@ -248,8 +248,10 @@ Common::Error GnapEngine::run() {
 	_sequenceCache = new SequenceCache(_dat);
 	_gameSys = new GameSys(this);
 	_soundMan = new SoundMan(this);
+#ifndef WRC
 	_debugger = new Debugger();
 	setDebugger(_debugger);
+#endif
 	_gnap = new PlayerGnap(this);
 	_plat = new PlayerPlat(this);
 
@@ -448,6 +450,7 @@ void GnapEngine::updateCursorByHotspot() {
 	if (!_isWaiting) {
 		int hotspotIndex = getHotspotIndexAtPos(_mousePos);
 
+#ifndef WRC
 		if (_debugger->_showHotspotNumber) {
 			// NOTE This causes some display glitches
 			char t[256];
@@ -458,6 +461,7 @@ void GnapEngine::updateCursorByHotspot() {
 				_gameSys->fillSurface(nullptr, 8, 9, _font->getStringWidth(t) + 10, _font->getFontHeight() + 2, 0, 0, 0);
 			_gameSys->drawTextToSurface(nullptr, 10, 10, 255, 255, 255, t);
 		}
+#endif
 
 		if (hotspotIndex < 0)
 			setCursor(kDisabledCursors[_verbCursor]);
