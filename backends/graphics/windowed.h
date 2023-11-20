@@ -117,11 +117,13 @@ protected:
 		const int sourceWidth = _activeArea.width;
 		const int sourceHeight = _activeArea.height;
 
-#ifndef WRC
 		if (sourceWidth == 0 || sourceHeight == 0) {
+#ifndef WRC
 			error("convertVirtualToWindow called without a valid draw rect");
-		}
+#else
+		return Common::Point(0, 0);
 #endif
+		}
 
 		int windowX = targetX + (x * targetWidth + sourceWidth / 2) / sourceWidth;
 		int windowY = targetY + (y * targetHeight + sourceHeight / 2) / sourceHeight;
@@ -146,7 +148,11 @@ protected:
 		const int targetHeight = _activeArea.height;
 
 		if (sourceWidth == 0 || sourceHeight == 0) {
+#ifndef WRC
 			error("convertWindowToVirtual called without a valid draw rect");
+#else
+		return Common::Point(0, 0);
+#endif
 		}
 
 		x = CLIP<int>(x, sourceX, sourceMaxX);

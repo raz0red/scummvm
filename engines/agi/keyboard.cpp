@@ -561,6 +561,10 @@ bool AgiEngine::handleController(uint16 key) {
 }
 
 bool AgiEngine::showPredictiveDialog() {
+#ifdef WRC
+	return true;
+#endif
+
 	GUI::PredictiveDialog predictiveDialog;
 
 	runDialog(predictiveDialog);

@@ -256,6 +256,7 @@ void MenuSystem::initMenu(MenuID menuID) {
 		addClickTextItem(kItemIdQuit, 0, 276, 320, 0, _vm->getSysString(kStrQuit), 253, 255);
 		break;
 	case kMenuIdLoad:
+#ifndef WRC
 		if (ConfMan.getBool("originalsaveload")) {
 			shadeRect(80, 92, 440, 141, 226, 225);
 			drawString(0, 75, 320, 1, 229, _vm->getSysString(kStrLoadGame));
@@ -268,7 +269,9 @@ void MenuSystem::initMenu(MenuID menuID) {
 			}
 			loadSavegamesList();
 			setSavegameCaptions(true);
-		} else {
+		} else
+#endif
+		{
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 			int slot = dialog->runModalWithCurrentTarget();
 			delete dialog;
@@ -285,6 +288,7 @@ void MenuSystem::initMenu(MenuID menuID) {
 		}
 		break;
 	case kMenuIdSave:
+#ifndef WRC
 		if (ConfMan.getBool("originalsaveload")) {
 			shadeRect(80, 92, 440, 141, 226, 225);
 			drawString(0, 75, 320, 1, 229, _vm->getSysString(kStrSaveGame));
@@ -298,7 +302,9 @@ void MenuSystem::initMenu(MenuID menuID) {
 			int newSlotNum = loadSavegamesList() + 1;
 			_savegames.push_back(SavegameItem(newSlotNum, Common::String::format("GAME %04d", _savegames.size())));
 			setSavegameCaptions(true);
-		} else {
+		} else
+#endif
+		{
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 			int slot = dialog->runModalWithCurrentTarget();
 			Common::String desc = dialog->getResultString();

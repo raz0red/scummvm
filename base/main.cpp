@@ -162,19 +162,19 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	assert(plugin);
 	assert(enginePlugin);
 
-#ifdef WRC
-	printf("## %s, %s\n", enginePlugin->getEngineId(), enginePlugin->getName());
-	bool forceOpenGL = false;
-	if (!strcmp("grim", enginePlugin->getName())) {
-		forceOpenGL = true;
-	}
+// #ifdef WRC
+// 	printf("## %s, %s\n", enginePlugin->getEngineId(), enginePlugin->getName());
+// 	bool forceOpenGL = false;
+// 	if (!strcmp("grim", enginePlugin->getName())) {
+// 		forceOpenGL = true;
+// 	}
 
-	if (forceOpenGL) {
-		EM_ASM(
-			window.emulator.set3d(true);
-		);
-	}
-#endif
+// 	if (forceOpenGL) {
+// 		EM_ASM(
+// 			window.emulator.set3d(true);
+// 		);
+// 	}
+// #endif
 
 	// Determine the game data path, for validation and error messages
 	Common::FSNode dir(ConfMan.get("path"));
@@ -188,12 +188,12 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	// needed because otherwise the g_system->getSupportedFormats might return
 	// bad values.
 	g_system->beginGFXTransaction();
-#ifndef WRC
+// #ifndef WRC
 		g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
-#else
-		g_system->setGraphicsMode(
-		    forceOpenGL ? "opengl" : ConfMan.get("gfx_mode").c_str());
-#endif
+// #else
+// 		g_system->setGraphicsMode(
+// 		    forceOpenGL ? "opengl" : ConfMan.get("gfx_mode").c_str());
+// #endif
 	if (g_system->endGFXTransaction() != OSystem::kTransactionSuccess) {
 		warning("Switching graphics mode to '%s' failed", ConfMan.get("gfx_mode").c_str());
 		return Common::kUnknownError;

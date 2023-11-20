@@ -796,9 +796,14 @@ int OSystem_SDL::getDefaultGraphicsMode() const {
 
 bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 	bool render3d = flags & OSystem::kGfxModeRender3d;
-
+#ifdef WRC
+printf("### Set graphics mode.\n");
+#endif
 	// In 3d render mode gfx mode param is ignored.
 	if (_graphicsModes.empty() && !render3d) {
+#ifdef WRC
+printf("### return 1\n");
+#endif
 		return _graphicsManager->setGraphicsMode(mode);
 	}
 
@@ -825,6 +830,9 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	if (render3d && !supports3D) {
 		debug(1, "switching to OpenGL 3D graphics");
+#ifdef WRC
+printf("### switching to OpenGL 3D graphics\n");
+#endif
 		sdlGraphicsManager->deactivateManager();
 		delete sdlGraphicsManager;
 		_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphics3dManager(_eventSource, _window, _supportsFrameBuffer);
@@ -833,6 +841,9 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 #endif
 	if ((supports3D || _graphicsMode >= _firstGLMode) && mode < _firstGLMode) {
 		debug(1, "switching to plain SDL graphics");
+#ifdef WRC
+printf("### switching to plain SDL graphics\n");
+#endif
 		if (sdlGraphicsManager) {
 			sdlGraphicsManager->deactivateManager();
 			delete sdlGraphicsManager;
@@ -841,6 +852,9 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 		switchedManager = true;
 	} else if ((supports3D || _graphicsMode < _firstGLMode) && mode >= _firstGLMode) {
 		debug(1, "switching to OpenGL graphics");
+#ifdef WRC
+printf("### switching to OpenGL graphics\n");
+#endif
 		sdlGraphicsManager->deactivateManager();
 		delete sdlGraphicsManager;
 		_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window);
@@ -850,35 +864,57 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 	_graphicsMode = mode;
 
 	if (switchedManager) {
+#ifdef WRC
+printf("### switched manage\n");
+#endif
 		sdlGraphicsManager->activateManager();
 
+#ifdef WRC
+printf("### past activate\n");
+#endif
 		// Setup the graphics mode and size first
 		// This is needed so that we can check the supported pixel formats when
 		// restoring the state.
-		_graphicsManager->beginGFXTransaction();
+		 _graphicsManager->beginGFXTransaction();
 		if (!_graphicsManager->setGraphicsMode(_graphicsModeIds[mode], flags))
 			return false;
-		_graphicsManager->initSize(_gfxManagerState.screenWidth, _gfxManagerState.screenHeight);
+				_graphicsManager->initSize(_gfxManagerState.screenWidth, _gfxManagerState.screenHeight);
 		_graphicsManager->endGFXTransaction();
+#ifdef WRC
+printf("### past setgraphicsmode\n");
+#endif
 
 		// This failing will probably have bad consequences...
 		if (!sdlGraphicsManager->setState(_gfxManagerState)) {
 			return false;
 		}
-
+#ifdef WRC
+printf("### past setstate\n");
+#endif
 		// Next setup the cursor again
 		CursorMan.pushCursor(nullptr, 0, 0, 0, 0, 0);
 		CursorMan.popCursor();
-
+#ifdef WRC
+printf("### past cursor\n");
+#endif
 		// Next setup cursor palette if needed
 		if (_graphicsManager->getFeatureState(kFeatureCursorPalette)) {
+#ifdef WRC
+printf("### setup cursor palette\n");
+#endif
 			CursorMan.pushCursorPalette(nullptr, 0, 0);
 			CursorMan.popCursorPalette();
 		}
 
 		_graphicsManager->beginGFXTransaction();
 		return true;
+#ifdef WRC
+printf("### past gfx txn\n");
+#endif
 	} else {
+#ifdef WRC
+printf("### about to setGraphicsMode\n");
+#endif
 		return _graphicsManager->setGraphicsMode(_graphicsModeIds[mode], flags);
 	}
 }

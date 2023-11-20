@@ -92,6 +92,10 @@ void EmscriptenEventSource::preprocessEvents(SDL_Event *event) {
 			case SDL_MOUSEBUTTONDOWN:
 			case SDL_MOUSEMOTION:     // disable here
 			case SDL_MOUSEBUTTONUP:
+// EM_ASM({
+//   window.debugOut("mouse event");
+// });
+
 				if (event->user.code != 1337) event->type = SDL_LASTEVENT;
 		}
 	}
@@ -111,14 +115,24 @@ void EmscriptenEventSource::preprocessEvents(SDL_Event *event) {
 			if (port == 0 || ConfMan.getBool("touchpad_mouse_mode")) {
 				switch (event->type) {
 				case SDL_FINGERDOWN:
+// EM_ASM({
+//   window.debugOut("finger down event");
+// });
 					//debug(0, "down[%li]: %i %i", event->tfinger.fingerId, (int) event->tfinger.x, (int) event->tfinger.y);
 					preprocessFingerDown(event);
 					break;
 				case SDL_FINGERUP:
+// EM_ASM({
+//   window.debugOut("finger up event");
+// });
+
 					//debug(0, "up[%li]: %i %i", event->tfinger.fingerId, (int) event->tfinger.x, (int) event->tfinger.y);
 					preprocessFingerUp(event);
 					break;
 				case SDL_FINGERMOTION:
+// EM_ASM({
+//   window.debugOut("finger motion event");
+// });
 					//debug(0, "mov[%li]: %i %i", event->tfinger.fingerId, (int) event->tfinger.x, (int) event->tfinger.y);
 					preprocessFingerMotion(event);
 					break;
@@ -133,6 +147,11 @@ void EmscriptenEventSource::preprocessFingerDown(SDL_Event *event) {
 	SDL_TouchID port = 0;
 	// id (for multitouch)
 	SDL_FingerID id = event->tfinger.fingerId;
+
+// EM_ASM({
+//   window.debugOut("finger down id: " + $0);
+// }, (int)id);
+
 
 	int x = _mouseX;
 	int y = _mouseY;
@@ -173,7 +192,7 @@ void EmscriptenEventSource::preprocessFingerUp(SDL_Event *event) {
 	// find out how many fingers were down before this event
 	int numFingersDown = 0;
 	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
-		if (_finger[port][i].id >= 0) {
+		if (_finger[port][i].id != -1) {
 			numFingersDown++;
 		}
 	}
@@ -244,10 +263,15 @@ void EmscriptenEventSource::preprocessFingerMotion(SDL_Event *event) {
 	// find out how many fingers were down before this event
 	int numFingersDown = 0;
 	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
-		if (_finger[port][i].id >= 0) {
+		if (_finger[port][i].id != -1) {
 			numFingersDown++;
 		}
 	}
+
+// EM_ASM({
+//   window.debugOut("fingers down: " + $0);
+// }, numFingersDown);
+
 
 	if (numFingersDown >= 1) {
 		int x = _mouseX;
@@ -315,7 +339,7 @@ void EmscriptenEventSource::preprocessFingerMotion(SDL_Event *event) {
 				// only start a multi-finger drag if at least two fingers have been down long enough
 				int numFingersDownLong = 0;
 				for (int i = 0; i < MAX_NUM_FINGERS; i++) {
-					if (_finger[port][i].id >= 0) {
+					if (_finger[port][i].id != -1) {
 						if (event->tfinger.timestamp - _finger[port][i].timeLastDown > MAX_TAP_TIME) {
 							numFingersDownLong++;
 						}
@@ -331,7 +355,7 @@ void EmscriptenEventSource::preprocessFingerMotion(SDL_Event *event) {
 							if (_finger[port][i].id == id) {
 								uint32 earliestTime = _finger[port][i].timeLastDown;
 								for (int j = 0; j < MAX_NUM_FINGERS; j++) {
-									if (_finger[port][j].id >= 0 && (i != j) ) {
+									if (_finger[port][j].id != -1 && (i != j) ) {
 										if (_finger[port][j].timeLastDown < earliestTime) {
 											mouseDownX = _finger[port][j].lastX;
 											mouseDownY = _finger[port][j].lastY;
@@ -372,7 +396,7 @@ void EmscriptenEventSource::preprocessFingerMotion(SDL_Event *event) {
 			for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 				if (_finger[port][i].id == id) {
 					for (int j = 0; j < MAX_NUM_FINGERS; j++) {
-						if (_finger[port][j].id >= 0 && (i != j) ) {
+						if (_finger[port][j].id != -1 && (i != j) ) {
 							if (_finger[port][j].timeLastDown < _finger[port][i].timeLastDown) {
 								updatePointer = false;
 							}
@@ -382,6 +406,9 @@ void EmscriptenEventSource::preprocessFingerMotion(SDL_Event *event) {
 			}
 		}
 		if (updatePointer) {
+// EM_ASM({
+//   window.debugOut("Mouse motion " + $0 + ", " + $1);
+// }, x, y);
 			event->type = SDL_MOUSEMOTION;
 			event->motion.x = x;
 			event->motion.y = y;
