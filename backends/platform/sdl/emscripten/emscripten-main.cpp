@@ -150,6 +150,12 @@ extern "C" void emKeyboard() {
 	g_system->getEventManager()->pushEvent(eventQ);
 }
 
+extern "C" void addVKeyEvent(Common::EventManager *eventMan, int code, int ascii, int mods, int down);
+extern "C" void emOnKey(int code, int ascii, int mods, int down) {
+	// printf("on key: %d, %d, %d, %d\n", code, ascii, mods, down);
+	addVKeyEvent(g_system->getEventManager(), code, ascii, mods, down);
+}
+
 int emScreenWidth = 0;
 int emScreenHeight = 0;
 
@@ -157,6 +163,12 @@ extern "C" void emSetScreenSize(int width, int height){
 	printf("## Set size: %d, %d\n", width, height);
 	emScreenWidth = width;
 	emScreenHeight = height;
+}
+
+extern "C" bool wrcDisableGamepad;
+extern "C" void emDisableGamepad(int disable) {
+	wrcDisableGamepad = disable ? true : false;
+	printf("Disable gamepad: %d\n", wrcDisableGamepad);
 }
 
 extern "C" int emPing() {

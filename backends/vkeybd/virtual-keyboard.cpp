@@ -19,8 +19,11 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #ifdef WRC
 #include <list>
+#include <emscripten.h>
 using namespace std;
 #endif
 
@@ -49,10 +52,23 @@ static list<Common::Event> events;
 extern "C" bool getVKeyEvent(Common::Event &evt) {
 	if (events.size() > 0) {
 		evt = events.front();
+
+// printf("Key: kc=%d, asc=%d, mod=%d\n", evt.kbd.keycode, evt.kbd.ascii, evt.kbd.flags);
+
 		events.pop_front();
 		return true;
 	}
 	return false;
+}
+
+extern "C" void addVKeyEvent(Common::EventManager *eventMan, int code, int ascii, int mods, int down) {
+	Common::Event evt;
+	evt.kbd.keycode = (Common::KeyCode)code;
+	evt.kbd.ascii = (uint16)ascii;
+	evt.kbd.flags = (byte)mods;
+
+	evt.type = down ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
+	events.push_back(evt);
 }
 #endif
 
@@ -257,6 +273,13 @@ void VirtualKeyboard::initKeymap() {
 }
 
 void VirtualKeyboard::show() {
+#ifdef WRC
+	EM_ASM(
+		window.emulator.toggleKeyboard();
+	);
+	return;
+#endif
+
 	if (!_loaded) {
 		debug(1, "VirtualKeyboard::show() - Virtual keyboard not loaded");
 		return;
@@ -289,7 +312,7 @@ void VirtualKeyboard::show() {
 			evt.kbd = _keyQueue.pop();
 			evt.type = EVENT_KEYDOWN;
 			events.push_back(evt);
-			
+
 			Event evt2;
 			evt2 = evt;
 			evt2.type = EVENT_KEYUP;

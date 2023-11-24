@@ -37,6 +37,11 @@
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 #define GAMECONTROLLERDB_FILE "gamecontrollerdb.txt"
 
+
+#ifdef WRC
+bool wrcDisableGamepad = false;
+#endif
+
 static uint32 convUTF8ToUTF32(const char *src) {
 	if (!src || src[0] == 0)
 		return 0;
@@ -590,7 +595,11 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		break;
 	}
 
+#ifndef WRC
 	if (_joystick) {
+#else
+	if (_joystick && !wrcDisableGamepad) {
+#endif
 		switch (ev.type) {
 		case SDL_JOYBUTTONDOWN:
 			return handleJoyButtonDown(ev, event);
@@ -606,7 +615,11 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 	}
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+#ifndef WRC
 	if (_controller) {
+#else
+	if (_controller && !wrcDisableGamepad) {
+#endif
 		switch (ev.type) {
 		case SDL_CONTROLLERBUTTONDOWN:
 			return handleControllerButton(ev, event, false);
